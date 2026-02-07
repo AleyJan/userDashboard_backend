@@ -1,6 +1,6 @@
 const Todo = require("../models/Todo");
 
-// ➕ Create Todo
+//  Create Todo
 exports.createTodo = async (req, res) => {
   try {
     const todo = await Todo.create({
@@ -14,7 +14,7 @@ exports.createTodo = async (req, res) => {
   }
 };
 
-// 📄 Get Logged-in User Todos
+//  Get Logged-in User Todos
 exports.getTodos = async (req, res) => {
   try {
     const todos = await Todo.find({ user: req.user.id });
@@ -24,7 +24,7 @@ exports.getTodos = async (req, res) => {
   }
 };
 
-// ✅ Toggle Todo
+// Toggle Todo
 exports.toggleTodo = async (req, res) => {
   try {
     const todo = await Todo.findOne({
@@ -45,7 +45,7 @@ exports.toggleTodo = async (req, res) => {
   }
 };
 
-// ❌ Delete Todo
+//  Delete Todo
 exports.deleteTodo = async (req, res) => {
   try {
     const todo = await Todo.findOneAndDelete({
