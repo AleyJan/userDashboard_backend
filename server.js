@@ -14,7 +14,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", // Vite/React dev server
+      "http://localhost:5173",
       "https://user-dashboard-frontend-gray.vercel.app",
     ],
   }),
