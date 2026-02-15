@@ -16,6 +16,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://user-dashboard-frontend-gray.vercel.app",
+      "https://user-dashboard-frontend-leowqwhwr-ali-jans-projects-49e3769a.vercel.app",
     ],
   }),
 );
