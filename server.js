@@ -1,7 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+require("dotenv").config(); // require only on root / here
+const { connectRedis } = require("./config/redis");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -21,6 +22,7 @@ app.use(
   }),
 );
 app.use(express.json());
+connectRedis();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
