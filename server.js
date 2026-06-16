@@ -44,6 +44,13 @@ app.use(async (req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/todos", todoRoutes);
+app.get("/test", (req, res) => {
+  res.json({
+    mongo_uri: process.env.MONGO_URI ? "✅ loaded" : "❌ missing",
+    redis_host: process.env.REDIS_HOST ? "✅ loaded" : "❌ missing",
+    jwt: process.env.JWT_SECRET ? "✅ loaded" : "❌ missing",
+  });
+});
 
 // ✅ Export instead of listen
 module.exports = app;
