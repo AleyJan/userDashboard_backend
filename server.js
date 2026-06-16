@@ -21,22 +21,37 @@ app.use(
 );
 app.use(express.json());
 
-// DB connections
-let isConnected = false;
-async function connectDB() {
-  if (isConnected) return;
+// Separate flags for each connection
+let mongoConnected = false;
+let redisConnected = false;
+
+async function connectMongo() {
+  if (mongoConnected) return;
   await mongoose.connect(process.env.MONGO_URI, { bufferCommands: false });
-  await connectRedis();
-  isConnected = true;
-  console.log("MongoDB + Redis Connected");
+  mongoConnected = true;
+  console.log("✅ MongoDB Connected");
 }
 
-// Middleware to connect before every request
+async function connectRedisOnce() {
+  if (redisConnected) return;
+  try {
+    await connectRedis();
+    redisConnected = true;
+    console.log("✅ Redis Connected");
+  } catch (err) {
+    // Redis failing should NOT block the app
+    console.error("Redis connection failed:", err.message);
+  }
+}
+
+// Only wait for MongoDB — Redis connects in background
 app.use(async (req, res, next) => {
   try {
-    await connectDB();
+    await connectMongo();
+    connectRedisOnce(); // fire and forget — don't await
     next();
   } catch (err) {
+    console.error("MongoDB connection failed:", err.message);
     res.status(500).json({ error: "DB connection failed" });
   }
 });
@@ -44,13 +59,14 @@ app.use(async (req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/todos", todoRoutes);
+
 app.get("/test", (req, res) => {
   res.json({
+    mongo: mongoConnected ? "✅ connected" : "❌ not connected",
+    redis: redisConnected ? "✅ connected" : "❌ not connected",
     mongo_uri: process.env.MONGO_URI ? "✅ loaded" : "❌ missing",
     redis_host: process.env.REDIS_HOST ? "✅ loaded" : "❌ missing",
-    jwt: process.env.JWT_SECRET ? "✅ loaded" : "❌ missing",
   });
 });
 
-// ✅ Export instead of listen
 module.exports = app;
