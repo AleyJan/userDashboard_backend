@@ -66,6 +66,10 @@ app.get("/test", (req, res) => {
     redis: redisConnected ? "✅ connected" : "❌ not connected",
     mongo_uri: process.env.MONGO_URI ? "✅ loaded" : "❌ missing",
     redis_host: process.env.REDIS_HOST ? "✅ loaded" : "❌ missing",
+    jwt_secret: process.env.JWT_SECRET ? "✅ loaded" : "❌ missing",
+    cloudinary_name: process.env.CLOUDINARY_NAME ? "✅ loaded" : "❌ missing",
+    cloudinary_key: process.env.CLOUDINARY_KEY ? "✅ loaded" : "❌ missing",
+    cloudinary_secret: process.env.CLOUDINARY_SECRET ? "✅ loaded" : "❌ missing",
   });
 });
 
