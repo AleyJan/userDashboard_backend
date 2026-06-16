@@ -17,7 +17,7 @@
     "redis": "^5.11.0"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node dev.js",
+    "dev": "nodemon dev.js"
   }
 }

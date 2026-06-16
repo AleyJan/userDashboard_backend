@@ -1,14 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config(); // require only on root / here
+require("dotenv").config();
 const { connectRedis } = require("./config/redis");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const todoRoutes = require("./routes/todoRoutes");
-
-const PORT = process.env.PORT || 5000;
 
 const app = express();
 
@@ -22,15 +20,30 @@ app.use(
   }),
 );
 app.use(express.json());
-connectRedis();
+
+// DB connections
+let isConnected = false;
+async function connectDB() {
+  if (isConnected) return;
+  await mongoose.connect(process.env.MONGO_URI, { bufferCommands: false });
+  await connectRedis();
+  isConnected = true;
+  console.log("MongoDB + Redis Connected");
+}
+
+// Middleware to connect before every request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ error: "DB connection failed" });
+  }
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/todos", todoRoutes);
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// ✅ Export instead of listen
+module.exports = app;
